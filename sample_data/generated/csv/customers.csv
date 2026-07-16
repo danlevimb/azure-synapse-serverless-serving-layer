@@ -1,0 +1,11 @@
+customer_id,customer_name,email,city,state_code,customer_segment,created_at,updated_at
+1,Northwind Retail Co.,contact@northwind-retail.example,Saltillo,COA,Corporate,2026-06-15 10:00:00,2026-06-15 10:00:00
+2,Sierra Bikes,ops@sierra-bikes.example,Monterrey,NL,Small Business,2026-06-15 10:00:00,2026-06-15 10:00:00
+3,Laguna Home Goods,sales@laguna-home.example,Torreon,COA,Consumer,2026-06-15 10:00:00,2026-06-15 10:00:00
+4,Capital Market MX,analytics@capital-market.example,Mexico City,CDMX,Corporate,2026-06-15 10:00:00,2026-06-15 10:00:00
+5,Pacific Office Supply,orders@pacific-office.example,Guadalajara,JAL,Small Business,2026-06-15 10:00:00,2026-06-15 10:00:00
+6,Desert Tech Store,hello@desert-tech.example,Hermosillo,SON,Consumer,2026-06-15 10:00:00,2026-06-15 10:00:00
+7,Bajio Digital Labs,team@bajio-digital.example,Queretaro,QRO,Corporate,2026-06-15 10:00:00,2026-06-15 10:00:00
+8,Maya Commerce Group,admin@maya-commerce.example,Merida,YUC,Small Business,2026-06-15 10:00:00,2026-06-15 10:00:00
+9,Central Learning Supplies,support@central-learning.example,Puebla,PUE,Education,2026-06-15 10:00:00,2026-06-15 10:00:00
+10,Frontier Hardware Hub,warehouse@frontier-hardware.example,Tijuana,BCN,Corporate,2026-06-15 10:00:00,2026-06-15 10:00:00

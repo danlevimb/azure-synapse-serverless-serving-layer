@@ -1,0 +1,11 @@
+product_id,product_name,category,unit_price,is_active,created_at,updated_at
+101,Mechanical Keyboard,Accessories,89.90,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+102,Wireless Mouse,Accessories,29.90,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+103,27-inch Monitor,Displays,249.00,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+104,USB-C Docking Station,Accessories,119.00,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+105,Noise Cancelling Headset,Audio,159.50,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+106,Laptop Stand,Accessories,49.90,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+107,Portable SSD 1TB,Storage,129.00,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+108,Webcam 1080p,Video,69.90,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+109,Ergonomic Chair,Office,299.00,True,2026-06-15 10:00:00,2026-06-15 10:00:00
+110,Desk Lamp Pro,Office,39.90,False,2026-06-15 10:00:00,2026-06-15 10:00:00
