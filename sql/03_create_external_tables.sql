@@ -1,127 +1,193 @@
 /*
 Project: azure-synapse-serverless-serving-layer
 Script: 03_create_external_tables.sql
-Purpose: Create external tables over curated Parquet datasets in ADLS Gen2.
+Purpose: Create Synapse Serverless SQL external tables over curated retail Parquet files in ADLS Gen2.
 
-Expected ADLS layout:
+Execution context:
+- Run in Azure Synapse Studio.
+- Connect to: Built-in serverless SQL pool.
+- Database: synapse_serving_demo.
 
-synapse-serving/
-  curated/
-    retail/
-      customers/customers.parquet
-      products/products.parquet
-      orders/orders.parquet
-      order_items/order_items.parquet
+Prerequisites:
+- sql/01_create_external_data_source.sql created ds_adls_synapse_serving.
+- sql/02_create_external_file_format.sql created ff_parquet and schemas ext/rpt/audit.
 */
 
-USE [synapse_serving_demo];
+USE synapse_serving_demo;
 GO
 
-IF OBJECT_ID(N'ext.customers', N'U') IS NOT NULL
-    DROP EXTERNAL TABLE [ext].[customers];
+/*
+Drop external tables if they already exist.
+This makes the script safe to rerun during lab development.
+*/
+IF EXISTS (
+    SELECT 1
+    FROM sys.external_tables
+    WHERE name = N'order_items'
+      AND schema_id = SCHEMA_ID(N'ext')
+)
+BEGIN
+    DROP EXTERNAL TABLE ext.order_items;
+END;
 GO
 
-CREATE EXTERNAL TABLE [ext].[customers]
+IF EXISTS (
+    SELECT 1
+    FROM sys.external_tables
+    WHERE name = N'orders'
+      AND schema_id = SCHEMA_ID(N'ext')
+)
+BEGIN
+    DROP EXTERNAL TABLE ext.orders;
+END;
+GO
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.external_tables
+    WHERE name = N'products'
+      AND schema_id = SCHEMA_ID(N'ext')
+)
+BEGIN
+    DROP EXTERNAL TABLE ext.products;
+END;
+GO
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.external_tables
+    WHERE name = N'customers'
+      AND schema_id = SCHEMA_ID(N'ext')
+)
+BEGIN
+    DROP EXTERNAL TABLE ext.customers;
+END;
+GO
+
+/*
+External table: customers
+Location maps to:
+abfss://synapse-serving@synapselabdan.dfs.core.windows.net/curated/retail/customers/
+*/
+CREATE EXTERNAL TABLE ext.customers
 (
-    [customer_id]       int              NOT NULL,
-    [customer_name]     varchar(100)     COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [email]             varchar(200)     COLLATE Latin1_General_100_BIN2_UTF8 NULL,
-    [city]              varchar(100)     COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [state_code]        varchar(10)      COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [customer_segment]  varchar(50)      COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [created_at]        datetime2(3)     NOT NULL,
-    [updated_at]        datetime2(3)     NOT NULL
+    customer_id       INT,
+    customer_name     VARCHAR(100),
+    email             VARCHAR(200),
+    city              VARCHAR(100),
+    state_code        VARCHAR(10),
+    customer_segment  VARCHAR(50),
+    created_at        DATETIME2(3),
+    updated_at        DATETIME2(3)
 )
 WITH
 (
     LOCATION = 'curated/retail/customers/',
-    DATA_SOURCE = [ds_adls_synapse_serving],
-    FILE_FORMAT = [ff_parquet]
+    DATA_SOURCE = ds_adls_synapse_serving,
+    FILE_FORMAT = ff_parquet
 );
 GO
 
-IF OBJECT_ID(N'ext.products', N'U') IS NOT NULL
-    DROP EXTERNAL TABLE [ext].[products];
-GO
-
-CREATE EXTERNAL TABLE [ext].[products]
+/*
+External table: products
+*/
+CREATE EXTERNAL TABLE ext.products
 (
-    [product_id]    int              NOT NULL,
-    [product_name]  varchar(150)     COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [category]      varchar(80)      COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [unit_price]    decimal(12, 2)   NOT NULL,
-    [is_active]     bit              NOT NULL,
-    [created_at]    datetime2(3)     NOT NULL,
-    [updated_at]    datetime2(3)     NOT NULL
+    product_id    INT,
+    product_name  VARCHAR(150),
+    category      VARCHAR(80),
+    unit_price    DECIMAL(12, 2),
+    is_active     BIT,
+    created_at    DATETIME2(3),
+    updated_at    DATETIME2(3)
 )
 WITH
 (
     LOCATION = 'curated/retail/products/',
-    DATA_SOURCE = [ds_adls_synapse_serving],
-    FILE_FORMAT = [ff_parquet]
+    DATA_SOURCE = ds_adls_synapse_serving,
+    FILE_FORMAT = ff_parquet
 );
 GO
 
-IF OBJECT_ID(N'ext.orders', N'U') IS NOT NULL
-    DROP EXTERNAL TABLE [ext].[orders];
-GO
-
-CREATE EXTERNAL TABLE [ext].[orders]
+/*
+External table: orders
+*/
+CREATE EXTERNAL TABLE ext.orders
 (
-    [order_id]        int              NOT NULL,
-    [customer_id]     int              NOT NULL,
-    [order_date]      date             NOT NULL,
-    [order_status]    varchar(30)      COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [payment_status]  varchar(30)      COLLATE Latin1_General_100_BIN2_UTF8 NOT NULL,
-    [order_total]     decimal(12, 2)   NOT NULL,
-    [created_at]      datetime2(3)     NOT NULL,
-    [updated_at]      datetime2(3)     NOT NULL
+    order_id        INT,
+    customer_id     INT,
+    order_date      DATE,
+    order_status    VARCHAR(30),
+    payment_status  VARCHAR(30),
+    order_total     DECIMAL(12, 2),
+    created_at      DATETIME2(3),
+    updated_at      DATETIME2(3)
 )
 WITH
 (
     LOCATION = 'curated/retail/orders/',
-    DATA_SOURCE = [ds_adls_synapse_serving],
-    FILE_FORMAT = [ff_parquet]
+    DATA_SOURCE = ds_adls_synapse_serving,
+    FILE_FORMAT = ff_parquet
 );
 GO
 
-IF OBJECT_ID(N'ext.order_items', N'U') IS NOT NULL
-    DROP EXTERNAL TABLE [ext].[order_items];
-GO
-
-CREATE EXTERNAL TABLE [ext].[order_items]
+/*
+External table: order_items
+*/
+CREATE EXTERNAL TABLE ext.order_items
 (
-    [order_item_id]  int              NOT NULL,
-    [order_id]       int              NOT NULL,
-    [product_id]     int              NOT NULL,
-    [quantity]       int              NOT NULL,
-    [unit_price]     decimal(12, 2)   NOT NULL,
-    [line_total]     decimal(12, 2)   NOT NULL,
-    [created_at]     datetime2(3)     NOT NULL,
-    [updated_at]     datetime2(3)     NOT NULL
+    order_item_id  INT,
+    order_id       INT,
+    product_id     INT,
+    quantity       INT,
+    unit_price     DECIMAL(12, 2),
+    line_total     DECIMAL(12, 2),
+    created_at     DATETIME2(3),
+    updated_at     DATETIME2(3)
 )
 WITH
 (
     LOCATION = 'curated/retail/order_items/',
-    DATA_SOURCE = [ds_adls_synapse_serving],
-    FILE_FORMAT = [ff_parquet]
+    DATA_SOURCE = ds_adls_synapse_serving,
+    FILE_FORMAT = ff_parquet
 );
 GO
 
+/*
+Validation: confirm external tables exist.
+*/
 SELECT
-    s.name AS schema_name,
-    t.name AS external_table_name,
-    ds.name AS external_data_source_name,
-    ds.location AS external_data_source_location,
-    ff.name AS external_file_format_name,
-    t.location AS table_location
-FROM sys.external_tables AS t
-INNER JOIN sys.schemas AS s
-    ON t.schema_id = s.schema_id
-INNER JOIN sys.external_data_sources AS ds
-    ON t.data_source_id = ds.data_source_id
-INNER JOIN sys.external_file_formats AS ff
-    ON t.file_format_id = ff.file_format_id
-WHERE s.name = N'ext'
-ORDER BY t.name;
+    SCHEMA_NAME(schema_id) AS schema_name,
+    name AS external_table_name
+FROM sys.external_tables
+WHERE SCHEMA_NAME(schema_id) = N'ext'
+ORDER BY name;
+GO
+
+/*
+Validation: row counts.
+Expected counts depend on the generated sample data.
+*/
+SELECT 'customers' AS table_name, COUNT(*) AS row_count FROM ext.customers
+UNION ALL
+SELECT 'products' AS table_name, COUNT(*) AS row_count FROM ext.products
+UNION ALL
+SELECT 'orders' AS table_name, COUNT(*) AS row_count FROM ext.orders
+UNION ALL
+SELECT 'order_items' AS table_name, COUNT(*) AS row_count FROM ext.order_items;
+GO
+
+/*
+Validation: preview data.
+*/
+SELECT TOP 10 * FROM ext.customers ORDER BY customer_id;
+GO
+
+SELECT TOP 10 * FROM ext.products ORDER BY product_id;
+GO
+
+SELECT TOP 10 * FROM ext.orders ORDER BY order_id;
+GO
+
+SELECT TOP 10 * FROM ext.order_items ORDER BY order_item_id;
 GO
