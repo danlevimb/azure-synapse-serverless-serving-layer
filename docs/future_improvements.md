@@ -2,8 +2,10 @@
 
 **Project:** `azure-synapse-serverless-serving-layer`  
 **Document:** Future Improvements  
-**Status:** Phase 6 — Documentation and Evidence Package  
-**Last updated:** 2026-07-17
+**Status:** Post-MVP improvement backlog  
+**Last updated:** 2026-10-08
+
+> **Current-state note.** These items are intentionally outside the completed technical MVP and should not be interpreted as current repository capabilities.
 
 ## 1. Purpose
 
