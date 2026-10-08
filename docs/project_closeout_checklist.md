@@ -1,158 +1,159 @@
 # Project Closeout Checklist
 
 **Project:** `azure-synapse-serverless-serving-layer`  
-**Document:** Project Closeout Checklist  
-**Status:** Final QA preparation
+**Status:** Technical MVP complete / portfolio standardization complete  
+**Last reviewed:** 2026-10-08
 
-## 1. Purpose
+## 1. Closeout summary
 
-This checklist defines the final steps required before the project can be considered portfolio-ready.
+The Synapse Serverless serving-layer implementation is complete and versioned.
 
-The project should not be closed only because the SQL scripts ran successfully.
+The public repository contains:
 
-It should be closed when the implementation, evidence, documentation, public safety review, and portfolio narrative are all complete.
+- curated sample Parquet assets;
+- Synapse Serverless SQL object definitions;
+- external tables;
+- reporting views;
+- analytical queries;
+- data-quality validation queries;
+- CETAS materialization;
+- CETAS validation;
+- Managed Identity / RBAC helper automation;
+- architecture, limitations, cost, and future-improvement documentation.
 
-## 2. Functional Completion
+The only material public-packaging limitation is that the **portal screenshot evidence set is partial**. The versioned implementation artifacts are therefore the primary public proof.
+
+## 2. Functional completion
 
 | Check | Status |
 |---|---|
-| ADLS Gen2 container created | Pending / Complete |
-| Curated Parquet files uploaded | Pending / Complete |
-| Synapse workspace created | Pending / Complete |
-| Built-in Serverless SQL validated | Pending / Complete |
-| Database `synapse_serving_demo` created | Pending / Complete |
-| External data source created | Pending / Complete |
-| External file format created | Pending / Complete |
-| External tables created | Pending / Complete |
-| Smoke test returned `PASS` | Pending / Complete |
-| Reporting views created | Pending / Complete |
-| Analytical queries executed successfully | Pending / Complete |
-| Data quality checks returned `PASS` | Pending / Complete |
-| CETAS output created | Pending / Complete |
-| CETAS validation executed successfully | Pending / Complete |
+| ADLS Gen2 curated Parquet assets prepared | Complete |
+| Synapse Serverless SQL database / object model implemented | Complete |
+| External data source defined | Complete |
+| External Parquet file format defined | Complete |
+| Four external tables defined | Complete |
+| External-table smoke-test script versioned | Complete |
+| Reporting views implemented | Complete |
+| Analytical query examples implemented | Complete |
+| 13 data-quality checks implemented | Complete |
+| CETAS output implemented | Complete |
+| CETAS metadata / totals validation implemented | Complete |
+| CETAS validation script filename normalized | Complete |
 
-## 3. Documentation Completion
+## 3. Documentation completion
 
 | Document | Status |
 |---|---|
-| `README.md` | Pending / Complete |
-| `docs/architecture_and_scope.md` | Pending / Complete |
-| `docs/source_data_model.md` | Pending / Complete |
-| `docs/adls_folder_structure.md` | Pending / Complete |
-| `docs/data_serving_strategy.md` | Pending / Complete |
-| `docs/synapse_object_model.md` | Pending / Complete |
-| `docs/query_examples.md` | Pending / Complete |
-| `docs/cost_controls.md` | Pending / Complete |
-| `docs/evidence_index.md` | Pending / Complete |
-| `docs/known_limitations.md` | Pending / Complete |
-| `docs/future_improvements.md` | Pending / Complete |
-| `docs/certification_alignment.md` | Pending / Complete |
-| `docs/evidence_capture_guide.md` | Pending / Complete |
+| `README.md` | Complete |
+| `docs/architecture_and_scope.md` | Complete / historical design record |
+| `docs/source_data_model.md` | Complete |
+| `docs/adls_folder_structure.md` | Complete |
+| `docs/data_serving_strategy.md` | Complete |
+| `docs/synapse_object_model.md` | Complete |
+| `docs/query_examples.md` | Complete |
+| `docs/cost_controls.md` | Complete |
+| `docs/evidence_index.md` | Complete / current proof map |
+| `docs/known_limitations.md` | Complete |
+| `docs/future_improvements.md` | Complete |
+| `docs/certification_alignment.md` | Complete |
+| `diagrams/README.md` | Complete |
 
-## 4. Evidence Completion
+## 4. Evidence completion
 
-| Evidence Area | Status |
+| Evidence area | Public proof status |
 |---|---|
-| Synapse workspace ready | Pending / Complete |
-| ADLS curated data visible | Pending / Complete |
-| Database created | Pending / Complete |
-| External objects created | Pending / Complete |
-| Smoke test PASS | Pending / Complete |
-| Reporting views created | Pending / Complete |
-| Analytical queries results | Pending / Complete |
-| Data quality checks PASS | Pending / Complete |
-| CETAS output and validation | Pending / Complete |
-| Cost-control evidence | Pending / Complete |
+| Curated Parquet files | Versioned artifacts |
+| External data source / file format | Versioned SQL |
+| External tables | Versioned SQL |
+| Reporting views | Versioned SQL |
+| Analytical queries | Versioned SQL |
+| Data-quality validation | Versioned SQL |
+| CETAS materialization | Versioned SQL |
+| CETAS validation | Versioned SQL |
+| Managed Identity / RBAC helper | Versioned PowerShell |
+| ADLS upload screenshot | Published |
+| Complete portal screenshot trail | **Partial / not claimed** |
 
-## 5. Public Safety Review
+See [evidence_index.md](evidence_index.md) for the exact claims-to-proof mapping.
 
-Confirm the repository does not expose:
+## 5. Public-safety review
 
-- SQL admin passwords.
-- Storage account keys.
-- SAS tokens.
-- Connection strings.
-- Subscription IDs.
-- Tenant IDs.
-- Object IDs.
-- Private email addresses.
-- Local machine names.
-- Sensitive screenshots.
+The public repository must not expose:
 
-Recommended review commands:
+- SQL admin passwords;
+- storage account keys;
+- SAS tokens;
+- connection strings;
+- subscription IDs;
+- tenant IDs;
+- object / principal IDs;
+- private email addresses;
+- private machine names;
+- sensitive portal URLs.
 
-```powershell
-git status
-Select-String -Path .\**\* -Pattern "password|secret|key|sas|token|subscription|tenant" -CaseSensitive:$false
+The standardization pass preserves this boundary and does not add credentials or secrets.
+
+## 6. Link and rendering review
+
+Closeout QA requires:
+
+- README internal links resolve;
+- Mermaid architecture renders in GitHub;
+- CETAS Mermaid flow renders in GitHub;
+- the normalized `sql/09_validate_cetas_output.sql` path resolves;
+- evidence links point only to artifacts that actually exist;
+- historical documents clearly distinguish original planning from current state.
+
+## 7. Portfolio narrative
+
+The final repository communicates:
+
+```text
+Curated Parquet in ADLS Gen2
+        ↓
+Synapse Serverless SQL
+        ↓
+External tables
+        ↓
+Reporting views
+        ↓
+Analytics + data-quality checks
+        ↓
+CETAS serving output
 ```
 
-Manual review is still required because screenshots cannot be safely scanned by text search.
+The repo intentionally does **not** claim:
 
-## 6. Link and Rendering Review
+- Dedicated SQL Pool;
+- Spark Pool;
+- Power BI dashboard implementation;
+- private endpoints;
+- Microsoft Purview;
+- Infrastructure as Code;
+- full CI/CD;
+- production monitoring;
+- real-time ingestion.
 
-Before closeout:
+## 8. Companion learning lab
 
-- Validate README renders correctly in GitHub.
-- Validate all Markdown links work.
-- Validate evidence links work.
-- Validate screenshots open from GitHub.
-- Validate SQL scripts are readable.
-- Validate docs do not reference files that do not exist.
-
-## 7. Portfolio Narrative Review
-
-The final README should clearly communicate:
-
-- What problem the project solves.
-- What Azure services were used.
-- Why Synapse Serverless SQL was selected.
-- How external tables expose lake data.
-- What reporting views provide.
-- How data quality is validated.
-- How CETAS writes serving output back to ADLS.
-- What the MVP intentionally excludes.
-- What future improvements would make it production-ready.
-
-## 8. Companion Learning Lab Decision
-
-Confirm companion lab repository:
+The companion private lab remains separate:
 
 ```text
 azure-synapse-learning-lab
 ```
 
-The lab is separate from the public portfolio project and is used for:
+That repository is for practice, troubleshooting, repetition, and interview defense. It is not part of the public portfolio artifact.
 
-- Guided exercises.
-- Attempt scripts.
-- Troubleshooting practice.
-- Interview-defense notes.
-- Repetition and technical fluency.
+## 9. Final closeout state
 
-## 9. Roadmap Update Items
+```text
+Technical MVP                 COMPLETE
+SQL implementation artifacts  COMPLETE
+Documentation                 COMPLETE
+Technical diagrams            COMPLETE
+Public screenshot evidence    PARTIAL
+Scope boundaries              DOCUMENTED
+Portfolio standardization     COMPLETE
+```
 
-At final closeout, update the private roadmap repository with:
-
-- Synapse project start decision.
-- Functional MVP completion.
-- Portfolio repo status.
-- Companion dojo rule.
-- Synapse learning lab repo creation/status.
-- Updated project sequence.
-- Updated master snapshot.
-
-## 10. Closeout Criteria
-
-The project is portfolio-ready when:
-
-1. Functional MVP is complete.
-2. SQL scripts are committed and ordered.
-3. Documentation is complete.
-4. Evidence package is public-safe.
-5. README is polished.
-6. Known limitations are honest.
-7. Future improvements are clear.
-8. Repo has no obvious secrets.
-9. GitHub rendering and links are validated.
-10. Private roadmap is updated.
-
+The project is portfolio-ready with the explicit caveat that its screenshot evidence set is partial.

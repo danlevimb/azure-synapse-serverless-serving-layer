@@ -1,9 +1,11 @@
 # Architecture and Scope
 
 **Project:** `azure-synapse-serverless-serving-layer`
-**Status:** Phase 0 — Architecture and Scope Definition
+**Status:** Historical design record — MVP subsequently implemented
 **Last updated:** 2026-07-13
 **Roadmap role:** Analytical serving / SQL serving layer
+
+> **Historical design record.** This document captures the original architecture and scope decisions. The implementation later progressed to a completed technical MVP. See the [main README](../README.md) for the current state, exact implemented artifacts, and evidence boundary.
 
 ## 1. Project Objective
 

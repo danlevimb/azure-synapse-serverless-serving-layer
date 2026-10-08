@@ -1,0 +1,15 @@
+flowchart LR
+    A["Curated Parquet<br/>ADLS Gen2"] --> B["External Data Source<br/>+ Parquet File Format"]
+    B --> C["External Tables<br/>ext.customers<br/>ext.products<br/>ext.orders<br/>ext.order_items"]
+    C --> D["Reporting Views<br/>rpt.vw_sales_by_*"]
+    D --> E["Analytical SQL<br/>Business Queries"]
+    D --> F["Data Quality Checks<br/>13 validations"]
+    D --> G["CETAS<br/>rpt.sales_by_date_cetas"]
+    G --> H["Serving Parquet<br/>ADLS Gen2"]
+
+    classDef lake fill:#0b5cab,stroke:#38bdf8,color:#fff;
+    classDef sql fill:#172554,stroke:#60a5fa,color:#fff;
+    classDef validate fill:#064e3b,stroke:#34d399,color:#fff;
+    class A,H lake;
+    class B,C,D,E,G sql;
+    class F validate;

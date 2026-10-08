@@ -1,54 +1,92 @@
-# Azure Synapse Serverless Serving Layer
+<h1 align="center">Azure Synapse Serverless Serving Layer</h1>
 
-## Overview
+<p align="center">
+  SQL serving over curated Parquet in ADLS Gen2 using Synapse Serverless SQL, external tables, reporting views, data-quality queries, and CETAS.
+</p>
 
-This project demonstrates a SQL serving layer over curated data stored in Azure Data Lake Storage Gen2 using Azure Synapse Serverless SQL.
+<p align="center">
+  <a href="docs/architecture_and_scope.md">Architecture</a> |
+  <a href="docs/data_serving_strategy.md">Serving Strategy</a> |
+  <a href="docs/synapse_object_model.md">SQL Object Model</a> |
+  <a href="docs/evidence_index.md">Evidence</a> |
+  <a href="docs/cost_controls.md">Cost Controls</a>
+</p>
 
-The goal is to expose curated Parquet datasets through external tables, reporting views, analytical SQL queries, and a CETAS serving output so downstream users can consume Data Lake assets through a familiar SQL interface.
+---
 
-This project is part of an Azure Data Engineering portfolio focused on practical, recruiter-facing, and technically defensible cloud data engineering patterns.
+## The problem
 
-## Professional Narrative
+Curated Parquet files in a Data Lake are useful to engineers, but many analytical consumers still need a stable SQL interface.
 
-I built a SQL serving layer over Azure Data Lake Storage Gen2 using Azure Synapse Serverless SQL. The project exposes curated Parquet datasets through external tables and analytical views, demonstrates data quality checks from SQL, materializes a curated CETAS output back to the lake, and documents cost-aware querying practices for downstream analytics and BI consumption.
+A serving layer must answer:
 
-## Business Problem
+- How can lake files be exposed without copying them into provisioned SQL compute?
+- How can reusable SQL objects hide folder-level storage details?
+- Can business-facing views answer common analytical questions?
+- Can data-quality checks be performed from the serving layer itself?
+- Can selected query outputs be materialized back to the lake?
+- How can all of this remain cost-aware for a small analytical workload?
 
-A retail business has curated customer, product, order, and order item datasets stored in a Data Lake as Parquet files.
+This project focuses on that consumption layer.
 
-Analytical users need SQL access to answer business questions such as:
+## The idea
 
-- What are total sales by date?
-- Which customers generate the most revenue?
-- Which products sell the most?
-- Which cities generate the highest revenue?
-- What is the distribution of order and payment statuses?
-- Are there basic data quality issues visible from the serving layer?
-
-The solution creates a structured SQL access layer so users do not need to understand raw lake folder paths or file-level storage details.
-
-## Target Architecture
+The implementation uses **Azure Synapse Serverless SQL as a thin serving layer over curated Parquet in ADLS Gen2**.
 
 ```text
-Controlled sample data
+Curated Parquet in ADLS Gen2
         ↓
-Parquet files in ADLS Gen2
+Synapse Serverless SQL
         ↓
-Azure Synapse Serverless SQL
-        ↓
-External data source
-        ↓
-External file format
+External data source + Parquet file format
         ↓
 External tables
         ↓
 Reporting views
         ↓
-Analytical query layer
+Analytical queries + data-quality checks
         ↓
-Data quality queries
-        ↓
-CETAS serving output
+CETAS serving output back to ADLS Gen2
+```
+
+The project deliberately avoids Dedicated SQL Pool and Spark because neither is required to demonstrate this serving pattern.
+
+## At a glance
+
+| Area | Implementation |
+|---|---|
+| Cloud platform | Microsoft Azure |
+| Serving engine | Synapse Serverless SQL |
+| Storage | Azure Data Lake Storage Gen2 |
+| Curated format | Parquet |
+| SQL access | External data source + external file format |
+| Serving objects | External tables + reporting views |
+| Analytics | Business-facing SQL queries |
+| Data quality | 13 SQL validation checks |
+| Materialization | CETAS output back to ADLS Gen2 |
+| Security helper | Workspace Managed Identity + Storage Blob Data Reader script |
+| Cost model | Serverless / pay-per-query; no Dedicated SQL Pool or Spark Pool |
+| Implementation status | Completed technical MVP |
+| Public screenshot evidence | Partial; implementation artifacts are the primary public proof |
+
+## Target Architecture
+
+```mermaid
+flowchart LR
+    A["Curated Parquet<br/>ADLS Gen2"] --> B["External Data Source<br/>+ Parquet File Format"]
+    B --> C["External Tables<br/>ext.customers<br/>ext.products<br/>ext.orders<br/>ext.order_items"]
+    C --> D["Reporting Views<br/>rpt.vw_sales_by_*"]
+    D --> E["Analytical SQL<br/>Business Queries"]
+    D --> F["Data Quality Checks<br/>13 validations"]
+    D --> G["CETAS<br/>rpt.sales_by_date_cetas"]
+    G --> H["Serving Parquet<br/>ADLS Gen2"]
+
+    classDef lake fill:#0b5cab,stroke:#38bdf8,color:#fff;
+    classDef sql fill:#172554,stroke:#60a5fa,color:#fff;
+    classDef validate fill:#064e3b,stroke:#34d399,color:#fff;
+    class A,H lake;
+    class B,C,D,E,G sql;
+    class F validate;
 ```
 
 ## Implemented Scope
@@ -209,6 +247,29 @@ The project validates the following milestones:
 | CETAS output | Serving output is materialized to ADLS Gen2 |
 | CETAS validation | Output row counts and totals match source view |
 
+## CETAS Validation Flow
+
+```mermaid
+flowchart TD
+    A["rpt.vw_sales_by_date"] --> B["CETAS<br/>CREATE EXTERNAL TABLE AS SELECT"]
+    B --> C["serving/retail/sales_by_date_cetas/<br/>run_id=manual_001/"]
+    C --> D["rpt.sales_by_date_cetas"]
+    D --> E["Metadata validation<br/>sys.external_tables"]
+    D --> F["Business validation<br/>row counts + totals"]
+    F --> G{"Source view = CETAS output?"}
+    G -- "Yes" --> H["PASS"]
+    G -- "No" --> I["Investigate / rerun with new output path"]
+
+    classDef source fill:#172554,stroke:#60a5fa,color:#fff;
+    classDef output fill:#0b5cab,stroke:#38bdf8,color:#fff;
+    classDef pass fill:#064e3b,stroke:#34d399,color:#fff;
+    class A,B,D,E,F source;
+    class C output;
+    class H pass;
+```
+
+The CETAS script does not overwrite an existing output folder. Reruns use a new output path or require cleanup of the previous folder.
+
 ## Key Technical Lessons
 
 During implementation, the following Synapse Serverless behaviors were observed and documented:
@@ -264,35 +325,39 @@ evidence/
 
 ## Evidence
 
-Evidence should be stored under:
+The public proof model for this repository is intentionally split into two categories:
 
-```text
-evidence/
-```
+1. **Versioned implementation artifacts** — the primary proof for the SQL serving layer.
+2. **Public-safe screenshots** — supplemental visual evidence where it was actually captured and committed.
 
-Recommended evidence areas:
+The repository currently includes implementation artifacts for:
 
-```text
-01_synapse_workspace/
-02_adls_curated_data/
-03_sql_database/
-04_external_objects/
-05_external_tables_smoke_test/
-06_reporting_views/
-07_analytical_queries/
-08_data_quality_queries/
-09_cetas_output/
-10_cost_controls/
-```
+- external tables;
+- reporting views;
+- analytical queries;
+- data-quality checks;
+- CETAS materialization;
+- CETAS validation;
+- sample-data generation and curated Parquet files;
+- Managed Identity / RBAC helper automation.
 
-Evidence must be public-safe. Do not include storage keys, passwords, SAS tokens, connection strings, subscription IDs, tenant IDs, object IDs, private emails or sensitive local machine information.
+The public screenshot package is **partial**, not complete. One ADLS upload screenshot is currently versioned under `evidence/01_adls_structure/`.
+
+See [docs/evidence_index.md](docs/evidence_index.md) for the exact claims-to-proof map.
+
+Evidence must remain public-safe: no storage keys, passwords, SAS tokens, connection strings, subscription IDs, tenant IDs, object IDs, private emails, or sensitive local-machine information.
 
 ## Status
 
 ```text
-Functional MVP completed.
-Documentation and evidence packaging in progress.
+Technical MVP: Completed
+SQL implementation artifacts: Completed
+Documentation packaging: Completed
+Public screenshot evidence: Partial
+Repository standardization: In progress
 ```
+
+The incomplete screenshot pack is an explicit evidence limitation; it does not change the implemented SQL scope documented in the versioned scripts.
 
 ## Companion Learning Lab
 
@@ -306,10 +371,6 @@ The learning lab is used for guided practice, attempts, troubleshooting, repetit
 
 ## Next Steps
 
-1. Organize and sanitize execution evidence.
-2. Complete final documentation review.
-3. Validate README links and evidence links.
-4. Scan repository for secrets or sensitive values.
-5. Complete final public repository QA.
-6. Update the private roadmap repository.
-7. Start the companion `azure-synapse-learning-lab` dojo.
+Possible future enhancements are documented in [docs/future_improvements.md](docs/future_improvements.md).
+
+The companion `azure-synapse-learning-lab` is maintained separately so practice work does not dilute the public portfolio repository.
