@@ -2,8 +2,10 @@
 
 **Project:** `azure-synapse-serverless-serving-layer`  
 **Document:** Known Limitations  
-**Status:** Phase 6 — Documentation and Evidence Package  
-**Last updated:** 2026-07-17
+**Status:** Completed MVP reference  
+**Last updated:** 2026-10-08
+
+> **Current-state note.** The technical MVP is complete. These limitations remain intentional scope boundaries. Public screenshot evidence is partial, while the implementation artifacts are fully versioned in the repository.
 
 ## 1. Purpose
 
