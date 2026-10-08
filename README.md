@@ -71,26 +71,22 @@ The project deliberately avoids Dedicated SQL Pool and Spark because neither is 
 
 ## Target Architecture
 
-```text
-Controlled sample data
-        ↓
-Parquet files in ADLS Gen2
-        ↓
-Azure Synapse Serverless SQL
-        ↓
-External data source
-        ↓
-External file format
-        ↓
-External tables
-        ↓
-Reporting views
-        ↓
-Analytical query layer
-        ↓
-Data quality queries
-        ↓
-CETAS serving output
+```mermaid
+flowchart LR
+    A["Curated Parquet<br/>ADLS Gen2"] --> B["External Data Source<br/>+ Parquet File Format"]
+    B --> C["External Tables<br/>ext.customers<br/>ext.products<br/>ext.orders<br/>ext.order_items"]
+    C --> D["Reporting Views<br/>rpt.vw_sales_by_*"]
+    D --> E["Analytical SQL<br/>Business Queries"]
+    D --> F["Data Quality Checks<br/>13 validations"]
+    D --> G["CETAS<br/>rpt.sales_by_date_cetas"]
+    G --> H["Serving Parquet<br/>ADLS Gen2"]
+
+    classDef lake fill:#0b5cab,stroke:#38bdf8,color:#fff;
+    classDef sql fill:#172554,stroke:#60a5fa,color:#fff;
+    classDef validate fill:#064e3b,stroke:#34d399,color:#fff;
+    class A,H lake;
+    class B,C,D,E,G sql;
+    class F validate;
 ```
 
 ## Implemented Scope
@@ -250,6 +246,29 @@ The project validates the following milestones:
 | Data quality checks | Validation status returns `PASS` |
 | CETAS output | Serving output is materialized to ADLS Gen2 |
 | CETAS validation | Output row counts and totals match source view |
+
+## CETAS Validation Flow
+
+```mermaid
+flowchart TD
+    A["rpt.vw_sales_by_date"] --> B["CETAS<br/>CREATE EXTERNAL TABLE AS SELECT"]
+    B --> C["serving/retail/sales_by_date_cetas/<br/>run_id=manual_001/"]
+    C --> D["rpt.sales_by_date_cetas"]
+    D --> E["Metadata validation<br/>sys.external_tables"]
+    D --> F["Business validation<br/>row counts + totals"]
+    F --> G{"Source view = CETAS output?"}
+    G -- "Yes" --> H["PASS"]
+    G -- "No" --> I["Investigate / rerun with new output path"]
+
+    classDef source fill:#172554,stroke:#60a5fa,color:#fff;
+    classDef output fill:#0b5cab,stroke:#38bdf8,color:#fff;
+    classDef pass fill:#064e3b,stroke:#34d399,color:#fff;
+    class A,B,D,E,F source;
+    class C output;
+    class H pass;
+```
+
+The CETAS script does not overwrite an existing output folder. Reruns use a new output path or require cleanup of the previous folder.
 
 ## Key Technical Lessons
 
