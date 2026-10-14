@@ -12,7 +12,7 @@ This document maps the project's public claims to artifacts that are actually ve
 The repository uses two evidence types:
 
 1. **Implementation artifacts** — SQL, scripts, sample data, and documentation that prove what was built.
-2. **Public-safe screenshots** — supplemental execution evidence where it was actually captured and committed.
+2. **Screenshot evidence** — supplemental execution evidence where it was actually captured and committed.
 
 The screenshot pack is intentionally described as **partial** because the repository does not contain the full screenshot checklist originally planned during Phase 6.
 
@@ -53,15 +53,13 @@ CETAS validation
 
 This sequence is fully represented by versioned repository artifacts.
 
-## 4. Public screenshot evidence
+## 4. Published screenshot evidence
 
-The repository currently contains this public-safe screenshot:
+| File | What it shows | What it demonstrates |
+|---|---|---|
+| [`01_adls_parquet_upload_success.png`](../evidence/01_adls_structure/01_adls_parquet_upload_success.png) | Curated Parquet files present in the project ADLS structure after upload | The project has a concrete lake-backed dataset available for the Synapse Serverless serving layer |
 
-| File | What it proves |
-|---|---|
-| [`01_adls_parquet_upload_success.png`](../evidence/01_adls_structure/01_adls_parquet_upload_success.png) | Curated Parquet data was uploaded to the ADLS project structure |
-
-Additional execution screenshots were part of the original evidence plan but are **not currently committed**. They must not be described as present.
+Additional execution screenshots were part of the original evidence plan but are **not currently committed**. They are therefore not described as published proof.
 
 ## 5. Evidence claim boundary
 
@@ -76,24 +74,9 @@ Safe public claims:
 - A Managed Identity / RBAC helper script is included.
 - One ADLS upload screenshot is publicly versioned.
 
-Do not claim that the public repository currently contains a complete portal-screenshot trail for every execution milestone.
+The repository does not claim a complete portal-screenshot trail for every execution milestone.
 
-## 6. Public-safety rules
-
-Do not publish:
-
-- Subscription IDs
-- Tenant IDs
-- Object IDs / Principal IDs
-- personal email addresses
-- storage account keys
-- SAS tokens
-- connection strings
-- passwords
-- private machine names
-- sensitive portal URLs
-
-## 7. Future evidence enhancement
+## 6. Future evidence enhancement
 
 A future evidence refresh could add a small, high-value screenshot pack for:
 
