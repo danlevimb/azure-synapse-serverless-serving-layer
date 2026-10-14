@@ -1,8 +1,8 @@
 # Evidence
 
-This directory contains supplemental public-safe execution evidence for the Azure Synapse Serverless Serving Layer.
+This directory contains supplemental execution evidence for the Azure Synapse Serverless Serving Layer.
 
-The repository's primary public proof is the versioned implementation itself:
+The repository's primary proof remains the versioned implementation itself:
 
 - SQL object definitions;
 - analytical and data-quality queries;
@@ -10,28 +10,12 @@ The repository's primary public proof is the versioned implementation itself:
 - sample data and curated Parquet files;
 - helper automation.
 
-The screenshot package is currently **partial**.
+The screenshot package is intentionally partial.
 
-## Published screenshot
+## Published screenshot evidence
 
-```text
-01_adls_structure/
-└── 01_adls_parquet_upload_success.png
-```
-
-This screenshot confirms the curated Parquet upload / lake structure.
+| File | What it shows | What it demonstrates |
+|---|---|---|
+| [`01_adls_parquet_upload_success.png`](01_adls_structure/01_adls_parquet_upload_success.png) | Curated Parquet files uploaded into the project's ADLS structure | The serving-layer project has a concrete lake-backed data foundation available for Synapse Serverless SQL access |
 
 See [../docs/evidence_index.md](../docs/evidence_index.md) for the complete claims-to-proof mapping.
-
-## Public-safety rules
-
-Do not commit screenshots exposing:
-
-- subscription or tenant IDs;
-- object / principal IDs;
-- personal emails;
-- keys or SAS tokens;
-- connection strings;
-- passwords;
-- private machine names;
-- sensitive portal URLs.
